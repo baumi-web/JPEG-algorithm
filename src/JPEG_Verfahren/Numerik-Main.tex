@@ -1,0 +1,380 @@
+\documentclass[12pt]{article}
+\usepackage[ngerman]{babel}
+
+\usepackage[a4paper,left=4cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+
+%\usepackage[backend=biber, defernumbers=true]{biblatex} %Imports biblatex package
+\usepackage{csquotes}
+\usepackage{listings}
+\usepackage[onehalfspacing]{setspace}
+\usepackage{amsmath}
+\setlength{\parindent}{0pt}
+
+\lstset{
+	language=Java,
+	basicstyle=\ttfamily\small,% Schriftgröße 10pt, Baselineskip 12pt
+	keywordstyle=\ttfamily\small,
+	stringstyle=\ttfamily\small,
+	numbers = left,
+	frame = single,
+	breaklines=true
+}
+
+
+\begin{document}
+	
+	\begin{titlepage}
+		\centering
+		{\scshape\Large Berufsakademie Sachsen \linebreak Staatliche Studienakademie Leipzig \par}
+		\vspace{1cm}
+		{\scshape\Large Hausarbeit Algorithmen und Datenstrukturen \linebreak Studiengang Informatik\linebreak Studienrichtung Informatik \par}
+		\vspace{1.5cm}
+		{\huge\bfseries Anwendung des JPEG–Verfahrens \par}
+		\vspace{2cm}
+		{\large  Eingereicht von: \ Leon Baumgarten \linebreak 5CS22-1 \linebreak Matrikelnummer: 5002213 \par}
+		
+		\vfill
+		
+		{\large \today\par}
+	\end{titlepage}
+	\thispagestyle{empty}
+	
+	\tableofcontents
+	\newpage
+	
+	\setcounter{page}{1}
+	\section{Einleitung}
+	
+	Das JPEG-Verfahren (\textit{Joint Photographic Experts Group}) ist eine weitverbreitete Methode zur Kompression digitaler Bilder, die eine signifikante Reduzierung der Dateigröße bei gleichzeitig geringem Verlust an optischer Qualität ermöglicht. Diese Hausarbeit demonstriert die Anwendung des JPEG-Algorithmus anhand eines gegebenen Graustufenbildes im Byte-Format mit einer Größe von 512 × 512 Pixeln. \\
+	
+	Der Algorithmus beginnt mit der Aufteilung des Bildes in 8 × 8 Blöcke. Anschließend wird auf jeden Block die diskrete Kosinustransformation (DCT) angewendet. Die resultierenden Koeffizienten werden quantisiert, wobei drei verschiedene Quantisierungsmatrizen (Q20, Q50, Q90) verwendet werden. Nach der Quantisierung erfolgt die Rücktransformation durch Multiplikation mit der jeweiligen Quantisierungsmatrix und inverse DCT, gefolgt von der Rekonstruktion des Bildes. \\
+	
+	In der vorliegenden wissenschaftlichen Hausarbeit werden die Schritte des JPEG-Verfahrens nachvollzogen, die Ergebnisse für verschiedene Quantisierungsmatrizen grafisch dargestellt und analysiert, sowie die Kompressionsleistung anhand des prozentualen Anteils der Nullen nach der Quantisierung bewertet.
+	
+	
+	--
+	 Die in der Hausarbeit beschriebene Implementierung zeigt somit die praktische Anwendung numerischer Methoden in der Bildverarbeitung. Durch die Zerlegung des Bildes in 8x8-Blöcke und die Umwandlung der Pixelwerte in das RGB-Format werden die Daten für den Einsatz des JPEG-Algorithmus vorbereitet, was einen wesentlichen Aspekt der modernen digitalen Bildkompression darstellt. Dieses Vorgehen veranschaulicht nicht nur die theoretischen Konzepte hinter der Bildkompression, sondern bietet auch Einblicke in die praktische Umsetzung numerischer Algorithmen in Software.
+		\newpage
+	\section{Aufgaben}
+	\textbf{1.} Es ist ein Datensatz\textit{ picdat.dat} gegeben. Er liegt für ein Graustufenbild im Byte– Format vor, d.h. die Werte pro Pixel liegen im Bereich \(0 \leq px \leq 255\). \\
+	Das Bild hat die Dimension 512 × 512. Lesen Sie den Datensatz ein und stellen Sie das Bild grafisch dar. \\
+	
+	\textbf{2.} Der JPEG–Algorithmus wird auf 8 × 8 Matrizen angewendet. Zerlegen Sie also die 512 × 512 Datenmatrix in 64 8 × 8 Untermatrizen.
+	. \\
+	
+	\textbf{3.} Berechnen Sie die 8 × 8 orthogonale Transformationsmatrix der DCT \\
+	
+	\textbf{4.}Auf jede Untermatrix wenden Sie den JPEG Algorithmus an: 
+	\begin{itemize}
+		\setlength{\itemsep}{-12pt}
+	\item Elementweise Subtraktion von 128\\
+	\item Anwendung der DCT\\
+	\item Quantisierung mit der Matrix Q\\
+	\item Rücktransformation (elementweise Multiplikation mit Q, inverse DCT, ele- mentweise Addition von 128)\\
+	\end{itemize}
+	\textbf{5.} Bilden Sie wieder eine 512 × 512 Matrix \\
+	
+	\textbf{6.} Es sind drei Q–Matrizen (8 × 8) gegeben: Q20 (Q20.dat), Q50 (Q50.dat) und Q90 (Q90.dat). Der JPEG–Algorithmus soll für alle drei Qi Matrizen ausgeführt werden. Für diese Matrizen geben Sie jeweils an:
+		\begin{itemize}
+		\setlength{\itemsep}{-12pt}
+		\item Wie hoch (prozentual) ist der Anteil der Nullen nach der Quantisierung\\
+		\item Geben sie die resultierenden Bildern grafisch wieder und vergleichen Sie diese
+		mit dem Originalbild\\
+	
+	\end{itemize}
+	\newpage
+	\section{Lösungen}
+	\subsection{Einlesen \& Ausgabe des Algorithmus}
+ 
+Zunächst wird in der main-Methode der Dateipfad festgelegt und die Bilddaten aus der Datei \textit{picdat.dat} gelesen. Diese Daten werden zeilenweise verarbeitet, wobei jede Zeile einen Grauwert darstellt, der in ein Byte-Array umgewandelt wird. Anschließend wird aus diesem Array ein BufferedImage des Typs RGB erstellt, indem jeder Grauwert auf die Rot-, Grün- und Blau-Komponenten verteilt wird. (px, px, px)Schließlich wird das Bild in einem JFrame angezeigt, indem ein JPanel verwendet wird, das das Bild zeichnet. \\
+
+Bei Fehlern während des Lesens der Datei oder der Bildgenerierung werden Fehlermeldungen in der Konsole ausgegeben. Der Code illustriert grundlegende Techniken der Datei- und Bildverarbeitung sowie der GUI-Anzeige in Java. \\
+	
+	\subsection{Aufteilen in 8x8 Matrizen}
+Das 512x512 Pixel große Bild wird in 8x8 Pixel große Blöcke unterteilt, ein Schritt, der grundlegend für den JPEG-Komprimierungsalgorithmus ist. Dabei wird zuerst die Blockgröße auf 8 Pixel festgelegt. Mit Hilfe einer Methode \textit{splitImageIntoBlocks} wird das Bild in ein zweidimensionales Array von BufferedImage-Objekten zerlegt. Dies geschieht durch das Durchlaufen des Bildes mit zwei verschachtelten Schleifen, die jeweils die Startpunkte der 8x8 Blöcke bestimmen und diese mittels der \textit{getSubimage}-Funktion extrahieren. Das Ergebnis ist ein Array, in dem jedes Element einem 8x8-Block des Originalbildes entspricht
+
+	\newpage
+	
+	\subsection{Berechnung orthogonale Transformationsmatrix der DCT}
+		Die diskrete Kosinustransformation (DCT) hilft dabei, das Bildsignal in Frequenzkomponenten zu zerlegen, wobei niedrige Frequenzen (Bereiche langsamer Änderung im Bild) von hohen Frequenzen (Bereiche schneller Änderung im Bild) getrennt werden. Dies ermöglicht eine effizientere Speicherung, da die visuell weniger wichtigen hohen Frequenzen stärker komprimiert werden können.\\
+		
+		Die diskrete Kosinustransformation (DCT) für eine $n \times n$-Matrix wird durch die folgende Transformationsmatrix $T$ repräsentiert:
+		\vspace{0.5cm}
+
+		\[
+		T_{ij}(n) = 
+		\begin{cases} 
+			\frac{1}{\sqrt{n}} & \text{für } i = 0, \\
+			\sqrt{\frac{2}{n}} \cos\left(\frac{\pi i (2j+1)}{2n}\right) & \text{sonst}.
+		\end{cases}
+		\]
+		\\
+		 Der Skalierungsfaktor $\alpha$ wird definiert als:
+		 	\[
+		 \alpha = 
+		 \begin{cases} 
+		 	\frac{1}{\sqrt{n}} & \text{wenn } u = 0 \\
+		 	\sqrt{\frac{2}{n}} & \text{sonst}
+		 \end{cases}
+		 \]
+		\\
+		Die Matrix $T$ für $n = 8$ kann dann folgendermaßen geschrieben werden:
+
+		
+		\[
+		T = \left( \begin{array}{cccccccc}
+			\alpha(0) \cdot \cos\left(\frac{(2\cdot0+1)0\pi}{16}\right) & \alpha(0) \cdot \cos\left(\frac{(2\cdot1+1)0\pi}{16}\right) & \cdots & \alpha(0) \cdot \cos\left(\frac{(2\cdot7+1)0\pi}{16}\right) \\
+			\alpha(1) \cdot \cos\left(\frac{(2\cdot0+1)1\pi}{16}\right) & \alpha(1) \cdot \cos\left(\frac{(2\cdot1+1)1\pi}{16}\right) & \cdots & \alpha(1) \cdot \cos\left(\frac{(2\cdot7+1)1\pi}{16}\right) \\
+			\vdots & \vdots & \ddots & \vdots \\
+			\alpha(7) \cdot \cos\left(\frac{(2\cdot0+1)7\pi}{16}\right) & \alpha(7) \cdot \cos\left(\frac{(2\cdot1+1)7\pi}{16}\right) & \cdots & \alpha(7) \cdot \cos\left(\frac{(2\cdot7+1)7\pi}{16}\right)
+		\end{array} \right)
+		\]
+		\\\\
+		Daraus ergibt sich folgende Transformationsmatrix: \\
+	\[
+	T = \left( \begin{array}{cccccccc}
+			0.354 & 0.354 & 0.354 & 0.354 & 0.354 & 0.354 & 0.354 & 0.354 \\
+			0.490 & 0.416 & 0.278 & 0.098 & -0.098 & -0.278 & -0.416 & -0.490 \\
+			0.462 & 0.191 & -0.191 & -0.462 & -0.462 & -0.191 & 0.191 & 0.462 \\
+			0.416 & -0.098 & -0.490 & -0.278 & 0.278 & 0.490 & 0.098 & -0.416 \\
+			0.354 & -0.354 & -0.354 & 0.354 & 0.354 & -0.354 & -0.354 & 0.354 \\
+			0.278 & -0.490 & 0.098 & 0.416 & -0.416 & -0.098 & 0.490 & -0.278 \\
+			0.191 & -0.462 & 0.462 & -0.191 & -0.191 & 0.462 & -0.462 & 0.191 \\
+			0.098 & -0.278 & 0.416 & -0.490 & 0.490 & -0.416 & 0.278 & -0.098
+	\end{array} \right)
+\]
+		\\
+		
+	
+	
+	
+		\subsection{Anwendung JPEG Algorithmus}
+		In diesem Kapitel ist der Pseudocode dargestellt, der die Logik zum Erstellen von 10 zufälligen Schlüsseln und die Ausgabe der Vater-Sohn-Beziehung beschreibt. Für das Erstellen von 10 zufälligen Schlüsseln wurde die Klasse 'Random' importiert. Mit der folgenden for-Schleife werden die Schlüssel erstellt. Die Funktion 'printTree' dient dazu, die Struktur des Suchbaums auszugeben. Dabei wird zunächst überprüft, ob der Wert in dem ersten Knoten \textit{null} ist. Wenn der aktuelle Knoten \textit{null}  ist, handelt es sich um das Ende des Teilbaums und die Funktion springt an das Ende. Danach wird überprüft, ob der aktuelle Teilbaum ein linkes und rechtes Kind hat. Die Ausgabe erfolgt per print-Anweisungen. Anschließend ruft sich die Funktion selbst wieder auf (Rekursion). So werden die linken und rechten Unterbäume durchlaufen, wodurch die Baumstruktur rekursiv ausgegeben wird. \\
+		\newline
+		\textbf{10 zufällige Schlüssel erstellen:}
+		\begin{lstlisting} 
+			for ( i von 0 bis 9) {
+				Erzeuge eine neue zufaellige Zahl -> value
+				Fuege value in den Baum ein }
+			Return baum
+		\end{lstlisting} 
+		\newpage %\vspace{0.5cm}
+		\textbf{Darstellung der Vater-Sohn-Beziehung:}
+		\begin{lstlisting}
+			Funktion printTree(root) {
+				Wenn root nicht null ist:
+				Gebe Wurzel aus
+				
+				Wenn root.left nicht null ist:
+				Gebe Linkes Kind aus
+				Sonst
+				Gebe "kein linkes Kind" aus
+				
+				Wenn root.right nicht null ist:
+				Gebe  Rechtes Kind aus
+				Sonst
+				Gebe "kein rechtes Kind " aus
+				
+				Gebe root.left aus
+				Gebe root.right aus }
+			
+			Funktion tenRandom(baum)
+			Erzeuge eine neue Zufallszahl
+			
+		\end{lstlisting}
+		
+		\subsection{512 x 512 Matrix bilden}
+		In diesem Kapitel ist der Pseudocode dargestellt, der 100 Datensätze mit 20 zufälligen Schlüsseln generiert und die durchschnittliche Höhe aller erstellten Suchbäume berechnet. Um 100 Datensätze zu generieren, wird die bereits in Aufgabe 4 (Kapitel 2.4) geschriebene Funktion 'generateRandomTree' genutzt und mithilfe einer for-Schleife 100 mal ausgeführt. Damit werden 100 Datensätze mit je 20 zufälligen Schlüsseln erstellt. Um die durchschnittliche Höhe aller erstellten Suchbäume zu errechnen, werden die Höhen der generierten Suchbäume in einer Variable gespeichert und zu der Variable 'totalHeight' addiert. Letztlich wird die gesamte Höhe aller Suchbäume durch die Anzahl geteilt und man bekommt die durchschnittliche Höhe heraus.\\
+		\newline
+		\textbf{100 zufällige Datensätze erstellen:}
+		\begin{lstlisting}
+			Ganzzahl numberOfTrees = 100
+			
+			Funktion generateRandomTree(baum, numberOfKeys){
+				for (i von 1 bis numberOfKeys){
+					Wert = Zufall.nextInt(500)
+					baum = Einfuegen(baum, Wert) }
+				Gib baum zurueck }
+			
+			for (i von 1 bis numberOfTrees) {
+				Baumknoten rootT = null
+				rootT = zufaelligen Baum(rootT, 20)
+				Aufruf Methode zum Berechnen der Hoehe }
+		\end{lstlisting}
+		\vspace{0.5cm}
+		\textbf{Durchschnittliche Höhe berechnen:}
+		\begin{lstlisting}
+			in heightT Hoehe von Funktion findHeight speichern
+			Ganzzahl totalHeight = 0
+			
+			totalHeight += Hoehe jedes Baumes
+			Double durchschnittliche Hoehe = totalHeight / numberOfTrees
+		\end{lstlisting} 
+		\vspace{0.5cm}
+		\textbf{Vergleich - durchschnittliche Höhe binärer Suchbaum mit AVL-Baum} \newline
+		In einem Vergleich zwischen einem binären Suchbaum (BST) und einem AVL-Baum hinsichtlich ihrer durchschnittlichen Höhen ergeben sich wesentliche Unterschiede aufgrund ihrer Struktur und Ausgeglichenheit. \\ \\
+		Ein binärer Suchbaum ist stark von der Reihenfolge der Schlüssel beim Einfügen abhängig. Im ungünstigsten Fall, etwa wenn die Schlüssel in auf- oder absteigender Reihenfolge eingefügt werden, kann die Höhe des Baums bis zu \(n-1\) betragen, wobei \(n\) die Anzahl der Schlüssel ist. Im besten Fall, wenn die Schlüssel zufällig eingefügt werden, kann die durchschnittliche Höhe bei etwa \(O(\log n)\) liegen. \newline
+		Im Gegensatz dazu sind AVL-Bäume darauf optimiert, eine ausgeglichene Struktur zu erhalten, indem sie sicherstellen, dass die Höhendifferenz zwischen den Teilbäumen maximal 1 beträgt. Dadurch wird eine maximale Höhe von \(O(\log n)\) gewährleistet. Die durchschnittliche Höhe eines zufällig konstruierten AVL-Baums ist daher tendenziell kleiner als die eines zufällig konstruierten binären Suchbaums, insbesondere wenn die Schlüssel zufällig eingefügt wurden. \newline
+		Die durchschnittliche Höhe eines BST liegt nach mehrmaligem Ausführen des Programmcodes größtenteils zwischen 6 und 7. Im Vergleich dazu liegt die durchschnittliche Höhe eines AVL-Baumes mit 20 zufälligen Schlüsseln bei ca. 3.8. Damit ist die theoretische Vermutung bestätigt, dass der AVL-Baum aufgrund seiner ausgeglichenen Struktur, bewerkstelligt durch einfache und doppelte Rotationen, eine kleinere durchschnittliche Höhe aufweist. \cite{binaryTreeD}
+		\newpage
+		
+		\section{Selbstständigkeitserklärung}
+		Ich versichere, dass ich die vorliegende Hausarbeit ohne
+		fremde Hilfe selbständig verfasst und nur die angegebenen Quellen und Hilfsmittel
+		benutzt habe. Wörtlich oder dem Sinn nach aus anderen Werken entnommene Stellen
+		sind unter Angabe der Quellen kenntlich gemacht. Die Arbeit wurde bisher in gleicher
+		oder ähnlicher Form weder veröffentlicht, noch einer anderen Prüfungsbehörde
+		vorgelegt. 
+		\vspace{16cm}
+		
+		Leipzig, \today \hspace{6cm} \line(-1,0){130}
+		\begin{center}
+			\hspace{36mm} {\footnotesize Leon Baumgarten}
+		\end{center}
+		
+		\newpage
+		\begin{thebibliography}{99} % 99 ist eine Platzhalterzahl, die die maximale Anzahl an Einträgen definiert.
+			
+			\bibitem{NumGrund}
+			Plato, Robert \\
+			\emph{Numerische Mathematik kompakt. Grundlagenwissen für Studium und Praxis.}. \\
+			Berlin, Germany: Springer Spektrum (Lehrbuch), 2021
+			
+			\bibitem{NumMath}
+			Schwarz, Hans Rudolf; Köckler, Norbert  \\
+			\emph{ Numerische Mathematik. [mit Online-Service}. \\
+			akualisierte Aufl. Wiesbaden: Vieweg + Teubner, (2011)
+			
+			\bibitem{skript}
+			Holger Perlt \\
+			\emph{Skript Vorlesung Numerik}. \\
+			
+			\bibitem{Ind}
+			A.M.Raid, W.M.Khedr, M. A. El-dosuky, Wesam Ahmed
+			\emph{Skript Mansoura University}. \\
+			https://www.airccse.org/journal/ijcses/papers/5214ijcses04.pdf (2014)
+			
+			
+			\bibitem{h1}
+			Saupe, D., Hamzaoui, R. 
+			\emph{Bild- und Videokompression}. \\
+			https://www.degruyter.com/document/doi/10.1524/itit.45.5.245.22713/html (2009)
+			
+		\end{thebibliography}
+				\newpage
+		
+		\section{Anhang}
+\textbf{Imports:}
+\begin{lstlisting}
+	import java.awt.image.BufferedImage;
+	import java.io.BufferedReader;
+	import java.io.FileReader;
+	import java.io.IOException;
+	import javax.swing.JFrame;
+	import javax.swing.JPanel;
+	import java.awt.Graphics;
+\end{lstlisting} 
+	\vspace{0.5cm}
+\textbf{Einlesen Datensatz und Ausgabe:}
+\begin{lstlisting}
+	public class GrayScaleImageBuilder {
+		
+		private static final int WIDTH = 512;
+		private static final int HEIGHT = 512;
+		
+		public static void main(String[] args) {
+			String filePath = "/Users/leonbaumgarten/eclipse-workspace/Numerik/src/JPEG_Verfahren/picdat.dat";
+			try {
+				// Auslesen der Bilddaten von picdat.dat
+				byte[] imageData = readImageData(filePath);
+				BufferedImage image = createRGBImageFromGrayScale(imageData); // BufferedImage aus den Grauwerten erstellen
+				System.out.println("Bild wurde erfolgreich erstellt.");
+				displayImage(image, "Graustufenbild");
+			} catch (IOException e) {
+				// falls Fehler -> Fehlermeldung ausgeben
+				System.err.println("Es gibt einen Fehler: " + e.getMessage());
+			}
+		}
+		// Daten aus Datei in byte-aArray speichern
+		private static byte[] readImageData(String filePath) throws IOException {
+			BufferedReader reader = new BufferedReader(new FileReader(filePath));
+			byte[] imageData = new byte[WIDTH * HEIGHT];
+			String line;
+			int index = 0;
+			
+			while ((line = reader.readLine()) != null && index < imageData.length) {
+				int grayValue = Integer.parseInt(line.trim()); // als Integer formatieren
+				imageData[index++] = (byte) grayValue; // Wert im byte-Array speichern
+			}
+			
+			reader.close();
+			if (index != WIDTH * HEIGHT) {
+				throw new IOException("Die Datei hat nicht die erwartete Anzahl von Pixeln.");
+			}
+			
+			return imageData;
+		}
+		
+		private static BufferedImage createRGBImageFromGrayScale(byte[] grayData) {
+			BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
+			int index = 0;
+			for (int y = 0; y < HEIGHT; y++) {
+				for (int x = 0; x < WIDTH; x++) {
+					int px = grayData[index++] & 0xFF; // Vorzeichen korrigieren
+					int rgb = (px << 16) | (px << 8) | px; // Grauwerte in RGB-format umwandeln (weil RGB-BufferedImage)
+					image.setRGB(x, y, rgb);
+				}
+			}
+			return image;
+		}
+		// Anzeige des Bildes
+		private static void displayImage(BufferedImage img, String title) {
+			javax.swing.SwingUtilities.invokeLater(() -> {
+				JFrame frame = new JFrame(title);
+				JPanel panel = new JPanel() {
+					@Override
+					protected void paintComponent(Graphics g) {
+						super.paintComponent(g);
+						g.drawImage(img, 0, 0, this);
+					}
+				};
+				panel.setPreferredSize(new java.awt.Dimension(img.getWidth(), img.getHeight()));
+				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				frame.getContentPane().add(panel);
+				frame.pack();
+				frame.setLocationRelativeTo(null);
+				frame.setVisible(true);
+			});
+		}
+	}
+	
+\end{lstlisting} 			
+	\vspace{1.0cm}
+\textbf{Segmentierung in 8x8 große Blöcke:}
+\begin{lstlisting}
+	// Groesse Untermatrizen
+	private static final int BLOCK_SIZE = 8;
+	
+	BufferedImage[][] blocks = splitImageIntoBlocks(image);
+	
+	private static BufferedImage[][] splitImageIntoBlocks(BufferedImage image) {
+		int numBlocksPerDimension = WIDTH / BLOCK_SIZE;
+		BufferedImage[][] blocks = new BufferedImage[numBlocksPerDimension][numBlocksPerDimension];
+		
+		for (int i = 0; i < numBlocksPerDimension; i++) {
+			for (int j = 0; j < numBlocksPerDimension; j++) {
+				// 8x8 Bloecke aus Gesamtbild ziehen
+				blocks[i][j] = image.getSubimage(j * BLOCK_SIZE, i * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+			}
+		}
+		
+		return blocks;
+	}
+\end{lstlisting} 
+		
+	\end{document}
+	
+	
+	
