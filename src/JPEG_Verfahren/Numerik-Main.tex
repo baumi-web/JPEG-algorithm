@@ -152,28 +152,28 @@ Das 512x512 Pixel große Bild wird in 8x8 Pixel große Blöcke unterteilt, ein S
 	
 		\subsection{Anwendung JPEG Algorithmus}
 Nachdem die Matrix in kleine Untermatrizen aufgeteilt wurde und die orthogonale Transformationsmatrix berechnet wurde, wird nun der JPEG-Algorithmus auf die einzelnen Untermatrizen angewandt.
-Dazu sind verschiedene Quantisierungs-Matrizen Q10,Q50,Q90 gegeben.
+Dazu sind verschiedene Quantisierungs-Matrizen Q10,Q50,Q90 gegeben.\\
 
-Elementweise Subtraktion von 128:
-Methode: subtract128(double[][] block)
-Diese Methode iteriert über jedes Element eines 8x8 Bildblocks und subtrahiert den Wert 128 von jedem Pixelwert, um den Mittelwert der Pixel für die DCT zu zentrieren.
+\textbf{Elementweise Subtraktion von 128:}\\
+Methode: subtract128(double[][] block)\\
+Diese Methode iteriert über jedes Element eines 8x8 Bildblocks und subtrahiert den Wert 128 von jedem Pixelwert, um den Mittelwert der Pixel für die DCT zu zentrieren.\\\\
 
-Anwendung der DCT:
-Methode: applyDCT(double[][] block, double[][] dctMatrix)
-Funktionsweise: applyDCT führt die diskrete Kosinustransformation auf den zentrierten Pixelwerten jedes Bildblocks aus. Diese Methode nutzt eine vorberechnete DCT-Matrix (dctMatrix), die durch die Methode createDCTMatrix(int size) generiert wird, um die DCT-Koeffizienten zu berechnen.
+\textbf{Anwendung der DCT:}\\
+Methode: applyDCT(double[][] block, double[][] dctMatrix)\\
+Funktionsweise: applyDCT führt die diskrete Kosinustransformation auf den zentrierten Pixelwerten jedes Bildblocks aus. Diese Methode nutzt eine vorberechnete DCT-Matrix (dctMatrix), die durch die Methode createDCTMatrix(int size) generiert wird, um die DCT-Koeffizienten zu berechnen.\\\\
 
-Quantisierung:
-Methode: quantizeBlock(double[][] block, int[][] quantMatrix)
-Funktionsweise: In dieser Methode wird jeder DCT-Koeffizient des transformierten Blocks durch entsprechende Werte der Quantisierungsmatrix geteilt und das Ergebnis wird gerundet. Diese Quantisierung reduziert Daten, indem sie weniger wichtige (höherfrequente) Informationen vermindert.
+\textbf{Quantisierung:}\\
+Methode: quantizeBlock(double[][] block, int[][] quantMatrix)\\
+Funktionsweise: In dieser Methode wird jeder DCT-Koeffizient des transformierten Blocks durch entsprechende Werte der Quantisierungsmatrix geteilt und das Ergebnis wird gerundet. Diese Quantisierung reduziert Daten, indem sie weniger wichtige (höherfrequente) Informationen vermindert.\\\\
 
-Rücktransformation:
-Dequantisierung:
+\textbf{Rücktransformation:}\\
+Dequantisierung: \\
 Methode: dequantizeBlock(double[][] block, int[][] quantMatrix)
-Funktionsweise: Diese Methode multipliziert jeden quantisierten DCT-Koeffizienten mit dem korrespondierenden Wert der Quantisierungsmatrix, um die ursprünglichen Wertegrößen teilweise wiederherzustellen.
-Anwendung der inversen DCT:
-Methode: applyIDCT(double[][] block, double[][] dctMatrix)
-Funktionsweise: Die inverse DCT wird verwendet, um die DCT-Koeffizienten zurück in den Bildraum zu transformieren, wodurch eine Näherung des ursprünglichen Bildes rekonstruiert wird.
-Elementweise Addition von 128:
+Funktionsweise: Diese Methode multipliziert jeden quantisierten DCT-Koeffizienten mit dem korrespondierenden Wert der Quantisierungsmatrix, um die ursprünglichen Wertegrößen teilweise wiederherzustellen.\\\\
+Anwendung der inversen DCT: \\
+Methode: applyIDCT(double[][] block, double[][] dctMatrix)\\
+Funktionsweise: Die inverse DCT wird verwendet, um die DCT-Koeffizienten zurück in den Bildraum zu transformieren, wodurch eine Näherung des ursprünglichen Bildes rekonstruiert wird.\\\\
+Elementweise Addition von 128:\\
 Methode: add128(double[][] block)
 Funktionsweise: Nach der Rücktransformation in den Bildraum wird zu jedem Pixelwert 128 addiert, um die anfängliche Helligkeitsskala wiederherzustellen und das Bild in seinen ursprünglichen Bereich zurückzubringen.
 
