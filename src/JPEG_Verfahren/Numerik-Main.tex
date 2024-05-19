@@ -151,33 +151,27 @@ Das 512x512 Pixel große Bild wird in 8x8 Pixel große Blöcke unterteilt, ein S
 	
 	
 		\subsection{Anwendung JPEG Algorithmus}
-Nachdem die Matrix in kleine Untermatrizen aufgeteilt wurde und die orthogonale Transformationsmatrix berechnet wurde, wird nun der JPEG-Algorithmus auf die einzelnen Untermatrizen angewandt.
-Dazu sind verschiedene Quantisierungs-Matrizen Q10,Q50,Q90 gegeben.\\
-
-\textbf{Elementweise Subtraktion von 128:}\\
-Methode: subtract128(double[][] block)\\
-Diese Methode iteriert über jedes Element eines 8x8 Bildblocks und subtrahiert den Wert 128 von jedem Pixelwert, um den Mittelwert der Pixel für die DCT zu zentrieren.\\\\
-
-\textbf{Anwendung der DCT:}\\
-Methode: applyDCT(double[][] block, double[][] dctMatrix)\\
-Funktionsweise: applyDCT führt die diskrete Kosinustransformation auf den zentrierten Pixelwerten jedes Bildblocks aus. Diese Methode nutzt eine vorberechnete DCT-Matrix (dctMatrix), die durch die Methode createDCTMatrix(int size) generiert wird, um die DCT-Koeffizienten zu berechnen.\\\\
-
-\textbf{Quantisierung:}\\
-Methode: quantizeBlock(double[][] block, int[][] quantMatrix)\\
-Funktionsweise: In dieser Methode wird jeder DCT-Koeffizient des transformierten Blocks durch entsprechende Werte der Quantisierungsmatrix geteilt und das Ergebnis wird gerundet. Diese Quantisierung reduziert Daten, indem sie weniger wichtige (höherfrequente) Informationen vermindert.\\\\
-
-\textbf{Rücktransformation:}\\
+\textbf{Elementweise Subtraktion mit 128:} \\
+Zu Beginn wird die Methode \textit{subtract128} verwendet, um von jedem Pixel eines Graustufenbildes 128 zu subtrahieren. Diese Zentrierung der Daten um den Nullpunkt optimiert die Daten für die nachfolgende diskrete Kosinustransformation (DCT). \\
+\\
+\textbf{Anwendung der DCT:} \\
+Die Methode \textit{applyDCT} führt die DCT auf die zuvor zentrierten Daten aus, die blockweise in 8x8 Segmenten verarbeitet werden. Die dafür benötigte DCT-Matrix wird durch die Methode \textit{createDCTMatriX} generiert, welche die notwendigen Transformationen für die Umwandlung in den Frequenzraum berechnet. \\
+\\
+\textbf{Quantisierung:} \\
+Nach der DCT-Transformation folgt die Quantisierung durch die Methode \textit{quantizeBlock}, bei der die DCT-Koeffizienten durch spezifische Werte einer Quantisierungsmatrix geteilt und gerundet werden. Dieser Prozess reduziert weniger wahrnehmbare, hochfrequente Details und erhöht somit die Kompressionseffizienz.\\
+\\
+\textbf{Rücktransformation:} \\
+Der letzte Schritt der JPEG-Kompression besteht aus mehreren Teilschritten, die die ursprünglichen Bildinformationen rekonstruieren.
+\\
 Dequantisierung: \\
-Methode: dequantizeBlock(double[][] block, int[][] quantMatrix)
-Funktionsweise: Diese Methode multipliziert jeden quantisierten DCT-Koeffizienten mit dem korrespondierenden Wert der Quantisierungsmatrix, um die ursprünglichen Wertegrößen teilweise wiederherzustellen.\\\\
+Durch die Methode \textit{dequantizeBlock} werden die quantisierten Werte mit den entsprechenden Werten der Quantisierungsmatrix multipliziert.\\
+\\
 Anwendung der inversen DCT: \\
-Methode: applyIDCT(double[][] block, double[][] dctMatrix)\\
-Funktionsweise: Die inverse DCT wird verwendet, um die DCT-Koeffizienten zurück in den Bildraum zu transformieren, wodurch eine Näherung des ursprünglichen Bildes rekonstruiert wird.\\\\
-Elementweise Addition von 128:\\
-Methode: add128(double[][] block)
-Funktionsweise: Nach der Rücktransformation in den Bildraum wird zu jedem Pixelwert 128 addiert, um die anfängliche Helligkeitsskala wiederherzustellen und das Bild in seinen ursprünglichen Bereich zurückzubringen.
-
-
+Die inverse DCT, durchgeführt von der Methode \textit{applyIDCT}, transformiert die Daten zurück aus der Frequenzraum in den örtlichen Raum. \\
+\\
+Elementweise Addition von 128: \\
+Abschließend wird mit \textit{add128} zu jedem Wert des rekonstruierten Blocks 128 addiert, um die ursprüngliche Helligkeitsskala wiederherzustellen. \\
+Durch die Verwendung dieser Methoden kann der Algorithmus effizient die JPEG-Bildkompression simulieren und demonstriert 
 		\newline
 		\textbf{10 zufällige Schlüssel erstellen:}
 		\begin{lstlisting} 
