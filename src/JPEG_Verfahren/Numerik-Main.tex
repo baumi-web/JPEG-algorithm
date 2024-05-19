@@ -158,87 +158,34 @@ Zu Beginn wird die Methode \textit{subtract128} verwendet, um von jedem Pixel ei
 Die Methode \textit{applyDCT} führt die DCT auf die zuvor zentrierten Daten aus, die blockweise in 8x8 Segmenten verarbeitet werden. Die dafür benötigte DCT-Matrix wird durch die Methode \textit{createDCTMatriX} generiert, welche die notwendigen Transformationen für die Umwandlung in den Frequenzraum berechnet. \\
 \\
 \textbf{Quantisierung:} \\
-Nach der DCT-Transformation folgt die Quantisierung durch die Methode \textit{quantizeBlock}, bei der die DCT-Koeffizienten durch spezifische Werte einer Quantisierungsmatrix geteilt und gerundet werden. Dieser Prozess reduziert weniger wahrnehmbare, hochfrequente Details und erhöht somit die Kompressionseffizienz.\\
+Nach der DCT folgt die Quantisierung durch die Methode \textit{quantizeBlock}, bei der die DCT-Koeffizienten durch spezifische Werte einer Quantisierungsmatrix Q geteilt und gerundet werden. Dieser Prozess reduziert weniger wahrnehmbare, hochfrequente Details und erhöht somit die Kompressionseffizienz.\\
 \\
 \textbf{Rücktransformation:} \\
 Der letzte Schritt der JPEG-Kompression besteht aus mehreren Teilschritten, die die ursprünglichen Bildinformationen rekonstruieren.
-\\
-Dequantisierung: \\
-Durch die Methode \textit{dequantizeBlock} werden die quantisierten Werte mit den entsprechenden Werten der Quantisierungsmatrix multipliziert.\\
-\\
-Anwendung der inversen DCT: \\
-Die inverse DCT, durchgeführt von der Methode \textit{applyIDCT}, transformiert die Daten zurück aus der Frequenzraum in den örtlichen Raum. \\
-\\
-Elementweise Addition von 128: \\
-Abschließend wird mit \textit{add128} zu jedem Wert des rekonstruierten Blocks 128 addiert, um die ursprüngliche Helligkeitsskala wiederherzustellen. \\
-Durch die Verwendung dieser Methoden kann der Algorithmus effizient die JPEG-Bildkompression simulieren und demonstriert 
-		\newline
-		\textbf{10 zufällige Schlüssel erstellen:}
-		\begin{lstlisting} 
-			for ( i von 0 bis 9) {
-				Erzeuge eine neue zufaellige Zahl -> value
-				Fuege value in den Baum ein }
-			Return baum
-		\end{lstlisting} 
-		\newpage %\vspace{0.5cm}
-		\textbf{Darstellung der Vater-Sohn-Beziehung:}
-		\begin{lstlisting}
-			Funktion printTree(root) {
-				Wenn root nicht null ist:
-				Gebe Wurzel aus
-				
-				Wenn root.left nicht null ist:
-				Gebe Linkes Kind aus
-				Sonst
-				Gebe "kein linkes Kind" aus
-				
-				Wenn root.right nicht null ist:
-				Gebe  Rechtes Kind aus
-				Sonst
-				Gebe "kein rechtes Kind " aus
-				
-				Gebe root.left aus
-				Gebe root.right aus }
-			
-			Funktion tenRandom(baum)
-			Erzeuge eine neue Zufallszahl
-			
-		\end{lstlisting}
+
+\begin{itemize}
+    \item Dequantisierung: \\
+Durch die Methode \textit{dequantizeBlock} werden die quantisierten Werte mit den entsprechenden Werten der Quantisierungsmatrix Q multipliziert.
+\item Anwendung der inversen DCT: \\
+Die inverse DCT, durchgeführt von der Methode \textit{applyIDCT}, transformiert die Daten zurück aus dem Frequenzraum in den örtlichen Raum. 
+\item Elementweise Addition von 128: \\
+Mit \textit{add128} wird zu jedem Wert des rekonstruierten Blocks 128 addiert. 
+\end{itemize}
 		
-		\subsection{512 x 512 Matrix bilden}
-		In diesem Kapitel ist der Pseudocode dargestellt, der 100 Datensätze mit 20 zufälligen Schlüsseln generiert und die durchschnittliche Höhe aller erstellten Suchbäume berechnet. Um 100 Datensätze zu generieren, wird die bereits in Aufgabe 4 (Kapitel 2.4) geschriebene Funktion 'generateRandomTree' genutzt und mithilfe einer for-Schleife 100 mal ausgeführt. Damit werden 100 Datensätze mit je 20 zufälligen Schlüsseln erstellt. Um die durchschnittliche Höhe aller erstellten Suchbäume zu errechnen, werden die Höhen der generierten Suchbäume in einer Variable gespeichert und zu der Variable 'totalHeight' addiert. Letztlich wird die gesamte Höhe aller Suchbäume durch die Anzahl geteilt und man bekommt die durchschnittliche Höhe heraus.\\
-		\newline
-		\textbf{100 zufällige Datensätze erstellen:}
-		\begin{lstlisting}
-			Ganzzahl numberOfTrees = 100
-			
-			Funktion generateRandomTree(baum, numberOfKeys){
-				for (i von 1 bis numberOfKeys){
-					Wert = Zufall.nextInt(500)
-					baum = Einfuegen(baum, Wert) }
-				Gib baum zurueck }
-			
-			for (i von 1 bis numberOfTrees) {
-				Baumknoten rootT = null
-				rootT = zufaelligen Baum(rootT, 20)
-				Aufruf Methode zum Berechnen der Hoehe }
-		\end{lstlisting}
-		\vspace{0.5cm}
-		\textbf{Durchschnittliche Höhe berechnen:}
-		\begin{lstlisting}
-			in heightT Hoehe von Funktion findHeight speichern
-			Ganzzahl totalHeight = 0
-			
-			totalHeight += Hoehe jedes Baumes
-			Double durchschnittliche Hoehe = totalHeight / numberOfTrees
-		\end{lstlisting} 
-		\vspace{0.5cm}
-		\textbf{Vergleich - durchschnittliche Höhe binärer Suchbaum mit AVL-Baum} \newline
-		In einem Vergleich zwischen einem binären Suchbaum (BST) und einem AVL-Baum hinsichtlich ihrer durchschnittlichen Höhen ergeben sich wesentliche Unterschiede aufgrund ihrer Struktur und Ausgeglichenheit. \\ \\
-		Ein binärer Suchbaum ist stark von der Reihenfolge der Schlüssel beim Einfügen abhängig. Im ungünstigsten Fall, etwa wenn die Schlüssel in auf- oder absteigender Reihenfolge eingefügt werden, kann die Höhe des Baums bis zu \(n-1\) betragen, wobei \(n\) die Anzahl der Schlüssel ist. Im besten Fall, wenn die Schlüssel zufällig eingefügt werden, kann die durchschnittliche Höhe bei etwa \(O(\log n)\) liegen. \newline
-		Im Gegensatz dazu sind AVL-Bäume darauf optimiert, eine ausgeglichene Struktur zu erhalten, indem sie sicherstellen, dass die Höhendifferenz zwischen den Teilbäumen maximal 1 beträgt. Dadurch wird eine maximale Höhe von \(O(\log n)\) gewährleistet. Die durchschnittliche Höhe eines zufällig konstruierten AVL-Baums ist daher tendenziell kleiner als die eines zufällig konstruierten binären Suchbaums, insbesondere wenn die Schlüssel zufällig eingefügt wurden. \newline
-		Die durchschnittliche Höhe eines BST liegt nach mehrmaligem Ausführen des Programmcodes größtenteils zwischen 6 und 7. Im Vergleich dazu liegt die durchschnittliche Höhe eines AVL-Baumes mit 20 zufälligen Schlüsseln bei ca. 3.8. Damit ist die theoretische Vermutung bestätigt, dass der AVL-Baum aufgrund seiner ausgeglichenen Struktur, bewerkstelligt durch einfache und doppelte Rotationen, eine kleinere durchschnittliche Höhe aufweist. \cite{binaryTreeD}
-		\newpage
+	\subsection{512 x 512 Matrix bilden}	
+Durch die Methode \textit{reassembleImage} wird das finale 512x512 Pixel große Bild aus den 8x8-Blöcken rekonstruiert. Diese Methode ordnet die einzelnen Bildblöcke in ihrer ursprünglichen Reihenfolge in einem neuen BufferedImage an. Es wird die Position jedes Blocks basierend auf dessen Index und Blockgröße berechnet. Anschließend werden die Pixelwerte in das Gesamtbild übertragen und mittels der \textit{displayImage} Methode dargestellt.
+		
+\newpage
+
+\subsection{Vergleich Bild durch Q10,Q50 und Q90}
+
+Die Verwendung unterschiedlicher Quantisierungsmatrizen Q10, Q50 und Q90 im JPEG-Kompressionsprozess führen zu signifikanten Unterschieden in der Bildqualität und Dateigröße. \\
+Bei der Verwendung von \textbf{Q10} erhält man einen prozentualen Anteil an Nullen von 93\%. Bei der grafischen Wiedergabe des Bildes sieht man eine deutliche Komprimierung. Es ist deutlich unschärfer als das Original. Die Quantisierungsmatrix ermöglicht eine starke Komprimierung, was jedoch auch zur deutlichen Abnahme der Bildqualität beiträgt. \\
+Bei dem Einsatz von Matrix \textbf{Q50} lässt sich erkennen, dass das Bild ausgeglichener und schärfer ist als bei Q10 und dem Original mehr ähnelt. Der Anteil an Nullen beträgt hierbei 87\%. \\
+Bei der Implementierung der Matrix \textbf{Q90} lässt sich erkennen, dass die Bildqualität nicht sichtbar schlechter geworden ist. Der Anteil an Nullen liegt bei 83\%. \\\\
+Diese unterschiedlichen Raten an Nullen verdeutlichen, wie die Wahl der Quantisierungsmatrix direkt die Balance zwischen Kompressionseffizienz und Bildqualität beeinflusst.
+
+\newpage
 		
 		\section{Selbstständigkeitserklärung}
 		Ich versichere, dass ich die vorliegende Hausarbeit ohne
@@ -256,7 +203,6 @@ Durch die Verwendung dieser Methoden kann der Algorithmus effizient die JPEG-Bil
 		
 		\newpage
 		\begin{thebibliography}{99} % 99 ist eine Platzhalterzahl, die die maximale Anzahl an Einträgen definiert.
-			
 			\bibitem{NumGrund}
 			Plato, Robert \\
 			\emph{Numerische Mathematik kompakt. Grundlagenwissen für Studium und Praxis.}. \\
@@ -284,116 +230,7 @@ Durch die Verwendung dieser Methoden kann der Algorithmus effizient die JPEG-Bil
 			
 		\end{thebibliography}
 				\newpage
-		
-		\section{Anhang}
-\textbf{Imports:}
-\begin{lstlisting}
-	import java.awt.image.BufferedImage;
-	import java.io.BufferedReader;
-	import java.io.FileReader;
-	import java.io.IOException;
-	import javax.swing.JFrame;
-	import javax.swing.JPanel;
-	import java.awt.Graphics;
-\end{lstlisting} 
-	\vspace{0.5cm}
-\textbf{Einlesen Datensatz und Ausgabe:}
-\begin{lstlisting}
-	public class GrayScaleImageBuilder {
-		
-		private static final int WIDTH = 512;
-		private static final int HEIGHT = 512;
-		
-		public static void main(String[] args) {
-			String filePath = "/Users/leonbaumgarten/eclipse-workspace/Numerik/src/JPEG_Verfahren/picdat.dat";
-			try {
-				// Auslesen der Bilddaten von picdat.dat
-				byte[] imageData = readImageData(filePath);
-				BufferedImage image = createRGBImageFromGrayScale(imageData); // BufferedImage aus den Grauwerten erstellen
-				System.out.println("Bild wurde erfolgreich erstellt.");
-				displayImage(image, "Graustufenbild");
-			} catch (IOException e) {
-				// falls Fehler -> Fehlermeldung ausgeben
-				System.err.println("Es gibt einen Fehler: " + e.getMessage());
-			}
-		}
-		// Daten aus Datei in byte-aArray speichern
-		private static byte[] readImageData(String filePath) throws IOException {
-			BufferedReader reader = new BufferedReader(new FileReader(filePath));
-			byte[] imageData = new byte[WIDTH * HEIGHT];
-			String line;
-			int index = 0;
-			
-			while ((line = reader.readLine()) != null && index < imageData.length) {
-				int grayValue = Integer.parseInt(line.trim()); // als Integer formatieren
-				imageData[index++] = (byte) grayValue; // Wert im byte-Array speichern
-			}
-			
-			reader.close();
-			if (index != WIDTH * HEIGHT) {
-				throw new IOException("Die Datei hat nicht die erwartete Anzahl von Pixeln.");
-			}
-			
-			return imageData;
-		}
-		
-		private static BufferedImage createRGBImageFromGrayScale(byte[] grayData) {
-			BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
-			int index = 0;
-			for (int y = 0; y < HEIGHT; y++) {
-				for (int x = 0; x < WIDTH; x++) {
-					int px = grayData[index++] & 0xFF; // Vorzeichen korrigieren
-					int rgb = (px << 16) | (px << 8) | px; // Grauwerte in RGB-format umwandeln (weil RGB-BufferedImage)
-					image.setRGB(x, y, rgb);
-				}
-			}
-			return image;
-		}
-		// Anzeige des Bildes
-		private static void displayImage(BufferedImage img, String title) {
-			javax.swing.SwingUtilities.invokeLater(() -> {
-				JFrame frame = new JFrame(title);
-				JPanel panel = new JPanel() {
-					@Override
-					protected void paintComponent(Graphics g) {
-						super.paintComponent(g);
-						g.drawImage(img, 0, 0, this);
-					}
-				};
-				panel.setPreferredSize(new java.awt.Dimension(img.getWidth(), img.getHeight()));
-				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-				frame.getContentPane().add(panel);
-				frame.pack();
-				frame.setLocationRelativeTo(null);
-				frame.setVisible(true);
-			});
-		}
-	}
 	
-\end{lstlisting} 			
-	\vspace{1.0cm}
-\textbf{Segmentierung in 8x8 große Blöcke:}
-\begin{lstlisting}
-	// Groesse Untermatrizen
-	private static final int BLOCK_SIZE = 8;
-	
-	BufferedImage[][] blocks = splitImageIntoBlocks(image);
-	
-	private static BufferedImage[][] splitImageIntoBlocks(BufferedImage image) {
-		int numBlocksPerDimension = WIDTH / BLOCK_SIZE;
-		BufferedImage[][] blocks = new BufferedImage[numBlocksPerDimension][numBlocksPerDimension];
-		
-		for (int i = 0; i < numBlocksPerDimension; i++) {
-			for (int j = 0; j < numBlocksPerDimension; j++) {
-				// 8x8 Bloecke aus Gesamtbild ziehen
-				blocks[i][j] = image.getSubimage(j * BLOCK_SIZE, i * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
-			}
-		}
-		
-		return blocks;
-	}
-\end{lstlisting} 
-		
 	\end{document}
 	
 	
