@@ -173,16 +173,13 @@ Mit \textit{add128} wird zu jedem Wert des rekonstruierten Blocks 128 addiert.
 \end{itemize}
 		
 	\subsection{512 x 512 Matrix bilden}	
-Durch die Methode \textit{reassembleImage} wird das finale 512x512 Pixel große Bild aus den 8x8-Blöcken rekonstruiert. Diese Methode ordnet die einzelnen Bildblöcke in ihrer ursprünglichen Reihenfolge in einem neuen BufferedImage an. Es wird die Position jedes Blocks basierend auf dessen Index und Blockgröße berechnet. Anschließend werden die Pixelwerte in das Gesamtbild übertragen und mittels der \textit{displayImage} Methode dargestellt.
-		
-\newpage
+Durch die Methode \textit{reassembleImage} wird das finale 512x512 Pixel große Bild aus den 8x8-Blöcken rekonstruiert. Diese Methode ordnet die einzelnen Bildblöcke in ihrer ursprünglichen Reihenfolge in einem neuen BufferedImage an. Es wird die Position jedes Blocks basierend auf dessen Index und Blockgröße berechnet. Anschließend werden die Pixelwerte in das Gesamtbild übertragen und mittels der \textit{displayImage} Methode dargestellt. \\
 
 \subsection{Vergleich Bild durch Q10,Q50 und Q90}
-
 Die Verwendung unterschiedlicher Quantisierungsmatrizen Q10, Q50 und Q90 im JPEG-Kompressionsprozess führen zu signifikanten Unterschieden in der Bildqualität und Dateigröße. \\
-Bei der Verwendung von \textbf{Q10} erhält man einen prozentualen Anteil an Nullen von 93\%. Bei der grafischen Wiedergabe des Bildes sieht man eine deutliche Komprimierung. Es ist deutlich unschärfer als das Original. Die Quantisierungsmatrix ermöglicht eine starke Komprimierung, was jedoch auch zur deutlichen Abnahme der Bildqualität beiträgt. \\
-Bei dem Einsatz von Matrix \textbf{Q50} lässt sich erkennen, dass das Bild ausgeglichener und schärfer ist als bei Q10 und dem Original mehr ähnelt. Der Anteil an Nullen beträgt hierbei 87\%. \\
-Bei der Implementierung der Matrix \textbf{Q90} lässt sich erkennen, dass die Bildqualität nicht sichtbar schlechter geworden ist. Der Anteil an Nullen liegt bei 83\%. \\\\
+Bei der Verwendung von \textbf{Q10} erhält man einen prozentualen Anteil an Nullen von 96,11\%. Bei der grafischen Wiedergabe des Bildes sieht man eine deutliche Komprimierung. Es ist deutlich unschärfer als das Original. Die Quantisierungsmatrix ermöglicht eine starke Komprimierung, was jedoch auch zur deutlichen Abnahme der Bildqualität beiträgt. \\
+Bei dem Einsatz von Matrix \textbf{Q50} lässt sich erkennen, dass das Bild ausgeglichener und schärfer ist als bei Q10 und dem Original mehr ähnelt. Der Anteil an Nullen beträgt hierbei 86,98\%. \\
+Bei der Implementierung der Matrix \textbf{Q90} lässt sich erkennen, dass die Bildqualität nicht sichtbar schlechter geworden ist. Der Anteil an Nullen liegt bei 83,43\%. \\\\
 Diese unterschiedlichen Raten an Nullen verdeutlichen, wie die Wahl der Quantisierungsmatrix direkt die Balance zwischen Kompressionseffizienz und Bildqualität beeinflusst.
 
 \newpage
@@ -214,7 +211,7 @@ Diese unterschiedlichen Raten an Nullen verdeutlichen, wie die Wahl der Quantisi
 			akualisierte Aufl. Wiesbaden: Vieweg + Teubner, (2011)
 			
 			\bibitem{skript}
-			Holger Perlt \\
+			Prof. Dr. Holger Perlt \\
 			\emph{Skript Vorlesung Numerik}. \\
 			
 			\bibitem{Ind}
