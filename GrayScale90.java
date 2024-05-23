@@ -1,6 +1,3 @@
-
-///////////////////////////7 8x8 Blöcke
-
 package JPEG_Verfahren;
 
 import java.awt.image.BufferedImage;
@@ -11,11 +8,14 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import java.awt.Graphics;
 
-public class GrayScaleImageBuilder {
+public class GrayScale90 {
 
     private static final int WIDTH = 512;
     private static final int HEIGHT = 512;
     private static final int BLOCK_SIZE = 8; // Größe Untermatrizen
+    
+    private static int totalZeros = 0;
+    private static int totalEntries = 0;
     
     private static final int[][] Q10 = {
     	    {80, 60, 50, 80, 120, 200, 255, 255},
@@ -52,7 +52,7 @@ public class GrayScaleImageBuilder {
 
 
     public static void main(String[] args) {
-        String filePath = "/Users/leonbaumgarten/eclipse-workspace/Numerik/src/JPEG_Verfahren/picdat.dat";
+        String filePath = "./src/JPEG_Verfahren/picdat.dat";
         try {
         	// Auslesen der Bilddaten von picdat.dat
             byte[] imageData = readImageData(filePath);
@@ -80,15 +80,15 @@ public class GrayScaleImageBuilder {
                     // Anwendung der DCT
                     double[][] transformedBlock = applyDCT(blockPixels, dctMatrix);
 
-                    // Quantisierung mit der Matrix Q10
-                    quantizeBlock(transformedBlock, Q50);
+                    // Quantisierung mit der Matrix Q90
+                    quantizeBlock(transformedBlock, Q90);
 
                     //System.out.println("Quantisierte Matrix für Block (" + i + "," + j + "):");
                     //printMatrixQ(transformedBlock);
 
                     // Rücktransformation starten
                     // Dequantisierung
-                    dequantizeBlock(transformedBlock, Q50);
+                    dequantizeBlock(transformedBlock, Q90);
 
 
                     // Anwendung der inversen DCT
@@ -96,14 +96,11 @@ public class GrayScaleImageBuilder {
 
                     // Elementweise Addition von 128
                     add128(recoveredBlock);
-
-
-                    // Konvertieren Sie recoveredBlock zurück in ein BufferedImage und speichern Sie es in blocks[i][j]
                     blocks[i][j] = convertToBufferedImage(recoveredBlock);
-                    // Optional: Konvertiere die Blöcke zurück und zeige sie an, um die Ergebnisse zu prüfen
                 }
             }
             System.out.println("Anwendung des JPEG-Algorithmus abgeschlossen");
+            printZeroPercentage();  // Prozentsatz der Nullen
 
             reassembleImage(blocks, BLOCK_SIZE);
             System.out.println("Resultierendes Bild wird ausgegeben");
@@ -133,7 +130,7 @@ public class GrayScaleImageBuilder {
 
         return imageData;
     }
-    
+    //BufferedImage konvertieren zu RGB
     private static BufferedImage createRGBImageFromGrayScale(byte[] grayData) {
         BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
         int index = 0;
@@ -146,7 +143,7 @@ public class GrayScaleImageBuilder {
         }
         return image;
     }
-
+    //Aufteilen Bild in 8x8 Blöcke
     private static BufferedImage[][] splitImageIntoBlocks(BufferedImage image) {
         int numBlocksPerDimension = WIDTH / BLOCK_SIZE;
         BufferedImage[][] blocks = new BufferedImage[numBlocksPerDimension][numBlocksPerDimension];
@@ -172,10 +169,10 @@ public class GrayScaleImageBuilder {
         }
         return dctMatrix;
     }
-    
+    // Anwendung der DCT
     private static double[][] applyDCT(double[][] block, double[][] dctMatrix) {
         int n = dctMatrix.length;
-        double[][] transformed = new double[n][n];
+        double[][] transformed = new double[n][n]; //Array für die transformierten Daten
         double sum;
 
         for (int u = 0; u < n; u++) {
@@ -183,7 +180,7 @@ public class GrayScaleImageBuilder {
                 sum = 0.0;
                 for (int i = 0; i < n; i++) {
                     for (int j = 0; j < n; j++) {
-                        sum += dctMatrix[u][i] * block[i][j] * dctMatrix[v][j];
+                        sum += dctMatrix[u][i] * block[i][j] * dctMatrix[v][j]; // DCT-Formel
                     }
                 }
                 transformed[u][v] = sum;
@@ -193,7 +190,7 @@ public class GrayScaleImageBuilder {
     }
     
     
-    
+    // Konvertieren von ganzzahligen Werten zu double Arrays
     private static double[][] convertToDoubleArray(BufferedImage block) {
         int width = block.getWidth();
         int height = block.getHeight();
@@ -202,7 +199,7 @@ public class GrayScaleImageBuilder {
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 int rgb = block.getRGB(x, y);
-                int gray = (rgb >> 16) & 0xFF; // Extrahiere den Rot-Kanal, der im Graustufenbild auch den Grauwert darstellt.
+                int gray = (rgb >> 16) & 0xFF;
                 result[y][x] = (double) gray;
             }
         }
@@ -221,8 +218,12 @@ public class GrayScaleImageBuilder {
         for (int i = 0; i < block.length; i++) {
             for (int j = 0; j < block[i].length; j++) {
                 block[i][j] = Math.round(block[i][j] / quantMatrix[i][j]);
+                if (block[i][j] == 0) {
+                    totalZeros++;  // Zähle Nullen
+                }
             }
         }
+        totalEntries += block.length * block[0].length;  // Aktualisiere die Gesamtanzahl der Einträge (für Berechnung Nullanteil)
     }
     
     //Dequantifizierung der Matrizen mit Q
@@ -290,7 +291,7 @@ public class GrayScaleImageBuilder {
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 int value = (int) Math.round(block[y][x]);
-                value = Math.max(0, Math.min(255, value)); // Klemmwert zwischen 0 und 255
+                value = Math.max(0, Math.min(255, value));
                 int rgb = (value << 16) | (value << 8) | value;
                 image.setRGB(x, y, rgb);
             }
@@ -298,11 +299,16 @@ public class GrayScaleImageBuilder {
 
         return image;
     }
+    // Berechnung Anteil an Nullen
+    private static void printZeroPercentage() {
+        if (totalEntries > 0) {
+            double percentage = (double) totalZeros / totalEntries * 100;
+            System.out.println("Prozentsatz der Nullen nach der Quantisierung: " + String.format("%.2f", percentage) + "%");
+        }
+    }
 
-
-
-
-    //Ausgabe der quantifizierten Matrizen
+///////////////////////////
+    //Ausgabe der quantifizierten Matrizen (Aufruf in Main auskommentiert)
     private static void printMatrixQ(double[][] matrix) {
         for (double[] row : matrix) {
             for (double value : row) {
@@ -312,10 +318,7 @@ public class GrayScaleImageBuilder {
         }
         System.out.println();
     }
-
-
-   
-
+///////////////////////////
 
     // Anzeige des Bildes
     private static void displayImage(BufferedImage img, String title) {
@@ -329,7 +332,7 @@ public class GrayScaleImageBuilder {
                 }
             };
             panel.setPreferredSize(new java.awt.Dimension(img.getWidth(), img.getHeight()));
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             frame.getContentPane().add(panel);
             frame.pack();
             frame.setLocationRelativeTo(null);
@@ -337,4 +340,3 @@ public class GrayScaleImageBuilder {
         });
     }
 } 
-///////////////
